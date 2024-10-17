@@ -2,7 +2,7 @@ import abc
 import requests
 import json
 
-from constance import settings
+from django.conf import settings
 
 
 class Whats():

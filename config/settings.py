@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 #bibliotecas de terceiros
 INSTALLED_APPS += [
     'rest_framework',
+    'channels'
 ]
 
 
@@ -79,7 +80,16 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'config.asgi.application'
+
 WSGI_APPLICATION = 'config.wsgi.application'
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
 
 
 # Database
@@ -155,3 +165,8 @@ TEMPLATES = [
         },
     },
 ]
+
+TOKEN_ACESS = 'EAAMCZBBSUNfkBO1zOqkbES3sk9jVaskr4ZBn8Bh0ONROQeORC62pKHmLa2763LxF2Flq1K8iuIvgfA69RCHt6uZA2m29UETJNLFwrxHylykr1IChre0mFUFS6y1eZAyptlGaTU9iKCCKkWFBiBv1y5GWzmJ58ZAFUPFjZASPFLPW6V5kQrMVsDg2CfYZBpfFEyhkxraPYST96qNVkfllt2EWDQfX0AZD'
+
+NUMBER= config('NUMBER')
+NUMBER_ID= config('NUMBER_ID')

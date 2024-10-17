@@ -6,15 +6,30 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated,AllowAny
+from main.consumers import MainConsumer
 
-
+#channels
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 class WebHook(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, requests):
         data = requests.data
 
-        print(data)
+        channel_layer = get_channel_layer()
+
+        # Envia a mensagem para o grupo 'chat'
+        async_to_sync(channel_layer.group_send)(
+            "main",  # Nome do grupo
+            {
+                "type": "main_message",  # Esse "type" corresponde ao método 'chat_message' no consumer
+                'user': data["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"],
+                'number':"",
+                "message": data["entry"][0]["changes"][0]["value"]["messages"][0]["text"]["body"]
+            }
+        )
 
         return Response(status=200)
 
