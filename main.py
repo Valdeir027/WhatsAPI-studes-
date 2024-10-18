@@ -1,7 +1,4 @@
 from whats import Whats
-from constance import settings
 
-print(settings.TOKEN_ACESS)
 
-print(Whats().reply_message(number='5595991452704',text="claro"))
-
+print(Whats().send_hello_world(number='5595991452704'))
