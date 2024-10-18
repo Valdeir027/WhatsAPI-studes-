@@ -2,7 +2,7 @@ import abc
 import requests
 import json
 
-from constance import settings
+from django.conf import settings
 
 
 class Whats():
@@ -29,5 +29,21 @@ class Whats():
 
         return response.json()
 
-    
+
+    def reply_message(self,number:str, text:str):
+        url = f'https://graph.facebook.com/v21.0/{settings.NUMBER_ID}/messages'
+
+        json_data= {
+            "messaging_product": "whatsapp",
+            "to": number,
+            "type": "text",
+            "text":{
+                "body":text,
+            }
+        }
+
+        data = json.dumps(json_data)
+        response = requests.post(url, headers=self._headers,data=data)
+
+        return response.json()
 

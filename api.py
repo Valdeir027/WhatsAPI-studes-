@@ -1,6 +1,10 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
+
+@app.route('/',methods=['GET'])
+def index():
+    return render_template('./templates/index.html')
 
 
 @app.route('/api/message', methods=['POST','GET'])
