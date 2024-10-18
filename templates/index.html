@@ -2,13 +2,18 @@
 
 {%block content %}
 
-<div class="content d-flex vh-100 justify-content-center align-items-center">
-
-    <form method="post" class="send-message" id="messageForm">
-        {% csrf_token %}
-        <input type="text" name="mensagem" placeholder="Mensagem" id="mensagemInput">
-        <input type="submit" class="btn btn-primary">
-    </form>
+<div class="content d-flex flex-column vh-100 justify-content-center align-items-center">
+    <div id="box-message">
+        
+    </div>
+    <div class="input-message  mt-5">
+        <form method="post" class="send-message" id="messageForm">
+            {% csrf_token %}
+            <input type="text" name="mensagem" placeholder="Mensagem" id="mensagemInput">
+            <input type="submit" class="btn btn-primary">
+        </form>
+    </div>
+    
 </div>
 
 {%endblock%}
@@ -21,7 +26,17 @@
     const socket = new WebSocket(baseUrl +"/ws/");
 
     socket.onmessage = (e) => {
-        console.log(e.data)
+        const data = JSON.parse(e.data);
+        const messageBox = document.querySelector('#box-message');
+        var html = `<div class="card" style="width: 18rem; height: 8rem;">
+                            <div class="card-body">
+                            <h5 class="card-title">${data.user}</h5>
+                            <p class="card-text">${data.message}</p>
+                            </div>
+                        </div>`
+                    
+
+        messageBox.insertAdjacentHTML('beforeend', html)
     }
 
     document.querySelector("#messageForm").addEventListener('submit', (e) => {
@@ -36,7 +51,7 @@
 
     // Envia a mensagem via WebSocket
     socket.send(JSON.stringify({
-        'user': 'valdeir',
+        'user': 'Diva',
         'number': '5595991452704',
         'send': true,
         'message': message

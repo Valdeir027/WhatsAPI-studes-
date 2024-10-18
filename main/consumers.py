@@ -51,8 +51,8 @@ class MainConsumer(WebsocketConsumer):
                     "body":message,
                 }
             }
-        data = json.dumps(json_data)
-        response = requests.post(url, headers=_headers,data=data)
+            data = json.dumps(json_data)
+            response = requests.post(url, headers=_headers,data=data)
 
         try:
             async_to_sync(self.channel_layer.group_send)(

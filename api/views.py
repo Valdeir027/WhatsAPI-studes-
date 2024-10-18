@@ -15,21 +15,30 @@ from channels.layers import get_channel_layer
 class WebHook(APIView):
     permission_classes = [AllowAny]
 
+
     def post(self, requests):
         data = requests.data
-
+        print(data)
         channel_layer = get_channel_layer()
+        try:
+            user = data["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"]
+        except:
+            user = "bot"
 
-        # Envia a mensagem para o grupo 'chat'
-        async_to_sync(channel_layer.group_send)(
-            "main",  # Nome do grupo
-            {
-                "type": "main_message",  # Esse "type" corresponde ao método 'chat_message' no consumer
-                'user': data["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"],
-                'number':"",
-                "message": data["entry"][0]["changes"][0]["value"]["messages"][0]["text"]["body"]
-            }
-        )
+        try:
+            message = data["entry"][0]["changes"][0]["value"]["messages"][0]["text"]["body"]
+        except:
+            message = None
+        if message:
+            async_to_sync(channel_layer.group_send)(
+                "main",  # Nome do grupo
+                {
+                    "type": "main_message",  # Esse "type" corresponde ao método 'chat_message' no consumer
+                    'user': user,
+                    'number':"",
+                    "message": message,
+                }
+            )
 
         return Response(status=200)
 
