@@ -1,0 +1,10 @@
+<ul id="messages" class="unique-message-container list-group list-group-flush">
+
+    {%if messages.count >= 1%}
+        {%for message in messages%}
+            {% include 'chat/message.html' %}             
+        {%endfor%}
+    {%else%}
+            <p class="text-center message_list_room">Nenhuma mensagem ainda...</p>
+    {%endif%}
+</ul>

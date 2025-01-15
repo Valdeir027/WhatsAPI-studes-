@@ -1,64 +1,45 @@
 {% extends 'default.html' %}
+{% load static %}
 
-{%block content %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/chat.css' %}">
+{% endblock %}
 
-<div class="content d-flex flex-column vh-100 justify-content-center align-items-center">
-    <div id="box-message">
-        
-    </div>
-    <div class="input-message  mt-5">
-        <form method="post" class="send-message" id="messageForm">
-            {% csrf_token %}
-            <input type="text" name="mensagem" placeholder="Mensagem" id="mensagemInput">
-            <input type="submit" class="btn btn-primary">
-        </form>
-    </div>
+{% block content %}
+<div class="d-flex justify-content-between">
     
+    <div class="d-flex justify-content-center align-items-center">
+        <img src="{% static 'icon.svg' %}"class="m-2" width="40" alt="">
+        <h3>
+            <span class="text-primary">Chat</span>Gepeteco
+        </h3>
+        </div>
+    <!-- <button type="button" class="btn btn-transparent mb-2" data-bs-toggle="modal"  data-bs-target="#staticBackdrop"><i class="bi bi-plus-circle-fill text-primary"></i></button> -->
 </div>
+<div class="d-flex h-100">
+        <div class="chat-rooms h-100 w-25">
+            <div class="rooms m-3">
+                <ul class="list-rooms list-group shadow border-0">
+                    {% include 'chat/chat-list-rooms.html'%}
+                </ul>
+            </div>
+        </div>
 
-{%endblock%}
+            <div class="chat-messages h-100 w-75" style="display: none">
+                
+                
+                <div div class="messages card m-3 p-3 h-75 shadow border-0 overflow-scroll">
+                    {% include 'chat/chat-list-message.html'%}
+                </div>
+                
+                
+                <div class="card m-3 shadow border-0">
+                    {% include 'chat/send-message.html'%}
+                </div>
+            </div>
+    </div>
+{% endblock %}
 
-
-{%block js %}
-
-<script>
-    const baseUrl = window.location.origin.replace(/^http/, 'ws');
-    const socket = new WebSocket(baseUrl +"/ws/");
-
-    socket.onmessage = (e) => {
-        const data = JSON.parse(e.data);
-        const messageBox = document.querySelector('#box-message');
-        var html = `<div class="card" style="width: 18rem; height: 8rem;">
-                            <div class="card-body">
-                            <h5 class="card-title">${data.user}</h5>
-                            <p class="card-text">${data.message}</p>
-                            </div>
-                        </div>`
-                    
-
-        messageBox.insertAdjacentHTML('beforeend', html)
-    }
-
-    document.querySelector("#messageForm").addEventListener('submit', (e) => {
-    e.preventDefault(); // Evita que o formulário seja submetido de forma tradicional
-    const formData = new FormData(e.target);
-    const message = formData.get('mensagem'); // Coleta o valor do campo "mensagem"
-    
-    if (message.trim() === "") {
-        alert("A mensagem não pode ser vazia!"); // Adiciona uma validação de mensagem vazia
-        return;
-    }
-
-    // Envia a mensagem via WebSocket
-    socket.send(JSON.stringify({
-        'user': 'Diva',
-        'number': '5595991452704',
-        'send': true,
-        'message': message
-    }));
-
-    // Opcional: Limpa o campo após o envio
-    document.querySelector("#mensagemInput").value = '';
-    });
-</script>
-{%endblock%}
+{% block js %}
+    <script defer src="{% static 'js/chat.js' %}"></script>
+{% endblock %}

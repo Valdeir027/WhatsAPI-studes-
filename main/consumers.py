@@ -3,8 +3,6 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from whats import Whats
 from django.conf import settings
-import requests
-
 
 class MainConsumer(WebsocketConsumer):
 
@@ -28,6 +26,7 @@ class MainConsumer(WebsocketConsumer):
     def receive(self, text_data):
         # Carrega a mensagem JSON recebida do WebSocket
         text_data_json = json.loads(text_data)
+        command = text_data_json.get('command',"")
         message = text_data_json.get("message", "")  # Pegue o campo "message" da mensagem recebida
         user = text_data_json.get('user',"")
         number =text_data_json.get('number')
@@ -35,24 +34,6 @@ class MainConsumer(WebsocketConsumer):
 
         print(f"Mensagem recebida: {message}")
 
-
-        if send:
-            _headers = {
-                'Authorization': f'Bearer {settings.TOKEN_ACESS}',
-                'Content-Type':'application/json' 
-            }
-
-            url = f'https://graph.facebook.com/v21.0/{settings.NUMBER_ID}/messages'
-            json_data= {
-                "messaging_product": "whatsapp",
-                "to": number,
-                "type": "text",
-                "text":{
-                    "body":message,
-                }
-            }
-            data = json.dumps(json_data)
-            response = requests.post(url, headers=_headers,data=data)
 
         try:
             async_to_sync(self.channel_layer.group_send)(
@@ -73,8 +54,6 @@ class MainConsumer(WebsocketConsumer):
         message = event.get('message', '')
         user = event.get('user','')
         number = event.get('number','')
-
-        print(f"Mensagem recebida no grupo: {message}")
         
         # Envia a mensagem de volta ao WebSocket
         self.send(text_data=json.dumps({
