@@ -1,3 +1,5 @@
+#django
+from django.conf import settings
 from django.shortcuts import render
 
 # DRF imports
@@ -6,12 +8,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated,AllowAny
-from main.consumers import MainConsumer
+
+#Local imports 
 from main.models import *
-from django.conf import settings
-#channels
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
+from main.consumers import MainConsumer
+from main.service import send_websocket_message
+
 
 class WebHook(APIView):
     permission_classes = [AllowAny]
@@ -20,7 +22,7 @@ class WebHook(APIView):
     def post(self, requests):
         data = requests.data
         print(data)
-        channel_layer = get_channel_layer()
+
         try:
             sts = data["entry"][0]["changes"][0]["value"]['statuses']
         except:
@@ -39,15 +41,7 @@ class WebHook(APIView):
                 message_obj, _  = Message.objects.get_or_create(profile=perfil,message_id=message['id'],timestamp=Message.timestap_from_data(message['timestamp']),text=message['text']['body'], chat=chat_obj) # type: ignore
 
                 if message_obj:
-                    async_to_sync(channel_layer.group_send)(
-                        "main",  # Nome do grupo
-                        {
-                            "type": "main_message",  
-                            'user': message_obj.profile.name,
-                            'number':message_obj.chat.profile.wa_id,
-                            "message": message_obj.text,
-                        }
-                    )
+                    send_websocket_message(message_obj)
 
         return Response(status=200)
 

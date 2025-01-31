@@ -61,16 +61,6 @@ socket.onclose = () => {
 
 
 const addMessage = (data) =>{
-    // if(message.user.id === user_autenticated.id){
-    //     var html = `
-    //     <div class="chat-message message-sent clearfix"">
-    //         <div class="message-text">
-    //         ${message.text}
-    //         </div>
-    //     </div>
-    //     `
-
-    // }else {
         var html = `
         <div class="chat-message  message-received clearfix">
             <div class="message-text">

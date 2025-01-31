@@ -21,13 +21,14 @@ def send_message(request):
     data = simplejson.loads(request.body)
     message = data.get('message')
     number=data.get('room_id')
+    
     whats_json = send_whats_message(number if number!='559591452704' else '5595991452704', message).json()
     profile = Profile.objects.get(wa_id=settings.NUMBER_ID)
     chat = Chat.objects.get(profile__wa_id = number)
     message_obj, _  = Message.objects.get_or_create(profile=profile,timestamp=datetime.now(),message_id=whats_json['messages'][0]['id'],text=message,chat=chat)
     send_websocket_message(message_obj)
     return JsonResponse({
-        'teste':'tese'
+        'success':'Message sent successfully'
     })
 
 
